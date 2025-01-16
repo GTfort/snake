@@ -23,7 +23,7 @@ public class GamePanel extends JPanel implements ActionListener {
 	int appleX;
 	int appleY;
 	char direction = 'R';
-
+	public boolean running = false;
 	Timer timer;
 	Random random;
 
@@ -39,7 +39,7 @@ public class GamePanel extends JPanel implements ActionListener {
 		// Add any additional initialization code here
 	}
 
-	public boolean running = false;
+
 
 	public void startGame() {
 		newApple();
@@ -107,14 +107,45 @@ public class GamePanel extends JPanel implements ActionListener {
 				x[0] = x[0] + UNIT_SIZE;
 				break;
 		}
+		if(!running){
+			timer.stop();
+
+		}
 	}
 
 	public void checkApple() {
 		// Check if the snake has eaten an apple
+		if ((x[0] == appleX) && (y[0] == appleY)) {
+			bodyParts++;
+			applesEaten++;
+			newApple();
+		}
 	}
 
 	public void checkCollision() {
 		// Check for collisions with walls or itself
+
+		for (int i = bodyParts; i > 0; i--) {
+			if ((x[0] == x[i]) && (y[0] == y[i])) {
+				running = false;
+			}
+		}
+		if (x[0] < 0) {
+			running = false;
+		}
+		if (x[0] > SCREEN_WIDTH) {
+			running = false;
+		}
+		if (y[0] < 0) {
+			running = false;
+		}
+		if (y[0] > SCREEN_HEIGHT) {
+			running = false;
+		}
+		if (!running) {
+			timer.stop();
+		}
+
 	}
 
 	public void gameOver(java.awt.Graphics g) {
@@ -128,15 +159,37 @@ public class GamePanel extends JPanel implements ActionListener {
 			move();
 			checkApple();
 			checkCollision();
-		} else {
-			repaint();
 		}
+			repaint();
+
 	}
 
 	public class MyKeyAdapter extends java.awt.event.KeyAdapter {
 		@Override
 		public void keyPressed(java.awt.event.KeyEvent e) {
 			// Handle key events
+			switch (e.getKeyCode()) {
+				case KeyEvent.VK_LEFT:
+					if (direction != 'R') {
+						direction = 'L';
+					}
+					break;
+				case KeyEvent.VK_RIGHT:
+					if (direction != 'L') {
+						direction = 'R';
+					}
+					break;
+				case KeyEvent.VK_UP:
+					if (direction != 'D') {
+						direction = 'U';
+					}
+					break;
+				case KeyEvent.VK_DOWN:
+					if (direction != 'U') {
+						direction = 'D';
+					}
+					break;
+			}
 		}
 	}
 }
