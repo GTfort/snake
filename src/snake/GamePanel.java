@@ -26,6 +26,8 @@ public class GamePanel extends JPanel implements ActionListener {
 	public boolean running = false;
 	Timer timer;
 	Random random;
+	JButton playAgainButton;
+
 
 	public GamePanel() {
 		// Initialize the game panel
@@ -37,6 +39,20 @@ public class GamePanel extends JPanel implements ActionListener {
 		startGame();
 
 		// Add any additional initialization code here
+		 // Initialize the play again button
+        playAgainButton = new JButton("Play Again");
+        playAgainButton.setFont(new Font("Ink Free", Font.BOLD, 20));
+        playAgainButton.setFocusable(false);
+        playAgainButton.setVisible(false);
+        playAgainButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                restartGame();
+            }
+        });
+        this.setLayout(null);
+        playAgainButton.setBounds((SCREEN_WIDTH - 200) / 2, SCREEN_HEIGHT / 2 + 100, 200, 50);
+        this.add(playAgainButton);
 	}
 
 
@@ -50,6 +66,28 @@ public class GamePanel extends JPanel implements ActionListener {
 		// Initialize game state, start timers, etc.
 	}
 
+	  public void restartGame() {
+        // Reset game state
+        bodyParts = 6;
+        applesEaten = 0;
+        direction = 'R';
+        running = true;
+        playAgainButton.setVisible(false);
+
+        // Reset snake position
+        for (int i = 0; i < bodyParts; i++) {
+            x[i] = 0;
+            y[i] = 0;
+        }
+
+        newApple();
+        timer.restart();
+        repaint();
+    }
+
+    @Override
+
+
 
 	public void paintComponent(java.awt.Graphics g) {
 		super.paintComponent(g);
@@ -58,12 +96,15 @@ public class GamePanel extends JPanel implements ActionListener {
 
 	public void draw(java.awt.Graphics g) {
 		// Draw the grid
+		/*
 		for (int i = 0; i < SCREEN_HEIGHT / UNIT_SIZE; i++) {
 			g.drawLine(i * UNIT_SIZE, 0, i * UNIT_SIZE, SCREEN_HEIGHT);
 		}
 		for (int i = 0; i < SCREEN_WIDTH / UNIT_SIZE; i++) {
 			g.drawLine(0, i * UNIT_SIZE, SCREEN_WIDTH, i * UNIT_SIZE);
 		}
+		*/
+		if (running){
 		// Draw game elements (snake, apple, etc.)
 		g.setColor(java.awt.Color.RED);
 		g.fillOval(appleX, appleY, UNIT_SIZE, UNIT_SIZE);
@@ -78,6 +119,13 @@ public class GamePanel extends JPanel implements ActionListener {
 			}
 		}
 		// on the panel
+	} else {
+		gameOver(g);
+	}
+		g.setColor(java.awt.Color.RED);
+		g.setFont(new java.awt.Font("Ink Free", java.awt.Font.BOLD, 40));
+		java.awt.FontMetrics metrics = getFontMetrics(g.getFont());
+		g.drawString("Score: " + applesEaten, (SCREEN_WIDTH - metrics.stringWidth("Score: " + applesEaten)) / 2, g.getFont().getSize());
 	}
 
 	public void newApple() {
@@ -150,6 +198,12 @@ public class GamePanel extends JPanel implements ActionListener {
 
 	public void gameOver(java.awt.Graphics g) {
 		// Display game over screen
+
+		g.setColor(java.awt.Color.RED);
+		g.setFont(new java.awt.Font("Ink Free", java.awt.Font.BOLD, 75));
+		java.awt.FontMetrics metrics1 = getFontMetrics(g.getFont());
+		g.drawString("Game Over", (SCREEN_WIDTH - metrics1.stringWidth("Game Over")) / 2, SCREEN_HEIGHT / 2);
+		playAgainButton.setVisible(true);
 	}
 
 
